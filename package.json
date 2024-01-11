@@ -1,0 +1,27 @@
+{
+  "name": "test-project",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "typescript": "^5.2.2",
+    "vite": "^5.0.11"
+  },
+  "dependencies": {
+    "@react-three/drei": "^9.93.0",
+    "@react-three/fiber": "^8.15.13",
+    "@react-three/rapier": "^1.2.1",
+    "@tweenjs/tween.js": "^21.0.0",
+    "react-three-fiber": "^6.0.13",
+    "three": "^0.160.0",
+    "three-orbit-controls": "^82.1.0",
+    "zustand": "^4.4.7"
+  }
+}
