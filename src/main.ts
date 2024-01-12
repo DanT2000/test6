@@ -15,7 +15,7 @@ class CubeScene {
   private outline: THREE.LineSegments | null = null;
   private isCubeActive: boolean = false;
   private animationStartTime: number = 0;
-  private animationDuration: number = 500; // 0.5 секунды
+  private animationDuration: number = 500;
   private initialControlPositions: { [key: string]: THREE.Vector3 } = {};
 
   constructor() {
@@ -26,13 +26,13 @@ class CubeScene {
     document.body.appendChild(this.renderer.domElement);
 
     const geometry = new THREE.BoxGeometry();
-    this.originalColor = new THREE.Color(0x808080); // Исходный цвет куба
+    this.originalColor = new THREE.Color(0x808080);
     const material = new THREE.MeshBasicMaterial({ color: this.originalColor });
     this.cube = new THREE.Mesh(geometry, material);
     this.cube.name = "cube_1";
     this.scene.add(this.cube);
 
-    this.highlightedColor = new THREE.Color(0xa0a0a0); // Цвет при выделении
+    this.highlightedColor = new THREE.Color(0xa0a0a0);
 
     this.camera.position.z = 5;
 
@@ -58,14 +58,12 @@ class CubeScene {
     controlY.name = "control_Y";
     controlZ.name = "control_Z";
 
-    // Сохраняем начальные позиции контролов
     this.initialControlPositions[controlX.name] = controlX.position.clone();
     this.initialControlPositions[controlY.name] = controlY.position.clone();
     this.initialControlPositions[controlZ.name] = controlZ.position.clone();
     controlX.position.x = 1.5;
     controlY.position.y = 1.5;
     controlZ.position.z = 1.5;
-
 
     this.scaleControls.push(controlX, controlY, controlZ);
     this.scene.add(...this.scaleControls);
@@ -88,13 +86,10 @@ class CubeScene {
 
     if (intersects.length > 0) {
       const clickedObject = intersects[0].object;
-      console.log(clickedObject);
 
       if (clickedObject.name === "cube_1" || clickedObject.type == "LineSegments" || clickedObject.name === "control_X" || clickedObject.name === "control_Y" || clickedObject.name === "control_Z") {
         if (!this.isCubeActive) {
           this.activateCube();
-        } else {
-          this.handleControlClick(clickedObject);
         }
       } else {
         if (this.isCubeActive) {
@@ -108,17 +103,14 @@ class CubeScene {
     }
   }
 
-  private handleControlClick(clickedControl: THREE.Object3D) {
-    // Обработка клика на контроле здесь
-  }
+
 
   private activateCube() {
     this.isCubeActive = true;
 
-    this.createScaleControls(); // Создаем контролы только при активации
-    this.enableDragControls(); // Включаем DragControls
+    this.createScaleControls();
+    this.enableDragControls();
 
-    // Плавно меняем цвет куба
     this.animateColor(this.cube.material.color, this.highlightedColor);
     const edges = new THREE.EdgesGeometry(new THREE.BoxGeometry(this.cube.scale.x, this.cube.scale.y, this.cube.scale.z));
     this.outline = new THREE.LineSegments(
@@ -126,23 +118,15 @@ class CubeScene {
       new THREE.LineBasicMaterial({ color: 0x00FF00, linewidth: 2 })
     );
     this.scene.add(this.outline);
-    // Отображаем контуры куба
-    // this.updateCubeScale();
   }
 
   private deactivateCube() {
     this.isCubeActive = false;
     this.orbitControls.rotateSpeed = 0.5;
-    this.removeScaleControls(); // Удаляем контролы при деактивации
-    this.disableDragControls(); // Выключаем DragControls
-
-    // Возвращаем контролы в их начальные позиции при деактивации
+    this.removeScaleControls();
+    this.disableDragControls();
     this.resetControlPositions();
-
-    // Плавно возвращаем исходный цвет куба
     this.animateColor(this.cube.material.color, this.originalColor);
-
-    // Убираем контуры
     this.removeOutline();
   }
 
@@ -161,21 +145,17 @@ class CubeScene {
   private enableDragControls() {
     this.dragControls = new DragControls(this.scaleControls, this.camera, this.renderer.domElement);
 
-    // Ограничиваем движение контролов по их осям
     this.dragControls.addEventListener('drag', (event) => {
       const control = event.object;
       this.orbitControls.rotateSpeed = 0;
 
       if (control === this.scaleControls[0]) {
-        // Ограничиваем движение по оси X
         control.position.y = this.cube.position.y;
         control.position.z = this.cube.position.z;
       } else if (control === this.scaleControls[1]) {
-        // Ограничиваем движение по оси Y
         control.position.x = this.cube.position.x;
         control.position.z = this.cube.position.z;
       } else if (control === this.scaleControls[2]) {
-        // Ограничиваем движение по оси Z
         control.position.x = this.cube.position.x;
         control.position.y = this.cube.position.y;
       }
@@ -218,13 +198,11 @@ class CubeScene {
 
   private updateCubeScale() {
     console.log(Math.abs(this.scaleControls[2].position.z - this.cube.position.z));
-    
-    // Обновляем масштаб куба в зависимости от положения контролов
+
     this.cube.scale.x = Math.abs(this.scaleControls[0].position.x - this.cube.position.x) / 1.5;
     this.cube.scale.y = Math.abs(this.scaleControls[1].position.y - this.cube.position.y) / 1.5;
     this.cube.scale.z = Math.abs(this.scaleControls[2].position.z - this.cube.position.z) / 1.5;
 
-    // Обновляем геометрию контура
     this.removeOutline();
     const edges = new THREE.EdgesGeometry(new THREE.BoxGeometry(this.cube.scale.x, this.cube.scale.y, this.cube.scale.z));
     this.outline = new THREE.LineSegments(
